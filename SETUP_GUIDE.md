@@ -77,9 +77,7 @@ python src/task4_modeling/train_models.py
 ```
 
 ### Run All Tasks
-```bash
-python run_all_tasks.py
-```
+Run each task individually as shown above.
 
 ## Step 7: Git Workflow
 
