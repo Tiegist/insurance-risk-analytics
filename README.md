@@ -6,12 +6,9 @@ This project is part of the **10 Academy: Artificial Intelligence Mastery** prog
 
 ## Business Objective
 
-AlphaCare Insurance Solutions (ACIS) is developing cutting-edge risk and predictive analytics for car insurance planning and marketing in South Africa. As a marketing analytics engineer, this project involves:
+Your employer, AlphaCare Insurance Solutions (ACIS), is committed to developing cutting-edge risk and predictive analytics in the area of car insurance planning and marketing in South Africa. You have recently joined the data analytics team as a marketing analytics engineer, and your first project is to analyse historical insurance claim data. The objective of your analyses is to help optimise the marketing strategy and discover "low-risk" targets for which the premium could be reduced, thereby creating an opportunity to attract new clients.
 
-- Analyzing historical insurance claim data (February 2014 to August 2015)
-- Optimizing marketing strategy
-- Discovering "low-risk" segments for premium reduction
-- Building predictive models for risk assessment and premium optimization
+The historical data is from February 2014 to August 2015.
 
 ## Project Structure
 
@@ -36,27 +33,44 @@ insurance-risk-analytics/
 ## Tasks
 
 ### Task 1: Git/GitHub & EDA
-- [x] Git repository setup
-- [ ] Exploratory Data Analysis (EDA)
-- [ ] Statistical analysis and visualizations
-- [ ] Data quality assessment
+**1.1 Git and GitHub**
+- Create a git repository with a good README
+- Git version control
+- CI/CD with GitHub Actions
+
+**1.2 Project Planning - EDA & Stats**
+- Data Understanding
+- Exploratory Data Analysis (EDA)
+  - Overall Loss Ratio and variation by Province, VehicleType, and Gender
+  - Distributions of key financial variables
+  - Temporal trends (claim frequency/severity over 18-month period)
+  - Vehicle makes/models with highest and lowest claim amounts
+  - Monthly changes TotalPremium and TotalClaims as function of ZipCode
+- Statistical thinking with suitable distributions and plots
 
 ### Task 2: Data Version Control (DVC)
-- [ ] Install and configure DVC
-- [ ] Set up local remote storage
-- [ ] Add and version control data files
+- Install DVC
+- Initialize DVC
+- Set up local remote storage
+- Add data to DVC
+- Commit and push data versions
 
 ### Task 3: A/B Hypothesis Testing
-- [ ] Test risk differences across provinces
-- [ ] Test risk differences between zip codes
-- [ ] Test margin differences between zip codes
-- [ ] Test risk differences between genders
+Accept or reject the following Null Hypotheses:
+- H₀: There are no risk differences across provinces
+- H₀: There are no risk differences between zip codes
+- H₀: There is no significant margin (profit) difference between zip codes
+- H₀: There is no significant risk difference between Women and Men
 
-### Task 4: Machine Learning Modeling
-- [ ] Claim severity prediction model
-- [ ] Premium optimization model
-- [ ] Model evaluation and comparison
-- [ ] Feature importance analysis (SHAP/LIME)
+Metrics: Claim Frequency and Claim Severity
+
+### Task 4: Machine Learning & Statistical Modeling
+- **For each zipcode, fit a linear regression model that predicts the total claims**
+- Claim Severity Prediction (Risk Model): For policies with claims > 0
+- Premium Optimization Model
+- Implement Linear Regression, Random Forests, and XGBoost
+- Model evaluation (RMSE, R²)
+- Feature importance analysis using SHAP or LIME
 
 ## Key Metrics
 

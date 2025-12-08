@@ -468,6 +468,104 @@ class InsuranceModelTrainer:
         
         return results
     
+    def train_zipcode_linear_regression_models(self):
+        """
+        For each zipcode, fit a linear regression model that predicts the total claims
+        This is a requirement from the document
+        """
+        print("\n" + "="*50)
+        print("ZIPCODE-SPECIFIC LINEAR REGRESSION MODELS")
+        print("="*50)
+        
+        # Find zipcode column
+        zipcode_col = None
+        for col in ['PostalCode', 'ZipCode', 'Zip', 'Postal']:
+            if col in self.df.columns:
+                zipcode_col = col
+                break
+        
+        if not zipcode_col:
+            print("✗ Zip code column not found in data")
+            return None
+        
+        # Get zipcodes with sufficient data (at least 10 samples)
+        zipcode_counts = self.df[zipcode_col].value_counts()
+        valid_zipcodes = zipcode_counts[zipcode_counts >= 10].index.tolist()
+        
+        print(f"\nFitting linear regression models for {len(valid_zipcodes)} zipcodes...")
+        
+        zipcode_models = {}
+        zipcode_results = []
+        
+        for zipcode in valid_zipcodes:
+            zipcode_data = self.df[self.df[zipcode_col] == zipcode].copy()
+            
+            # Prepare features for this zipcode
+            # Use relevant features that might predict TotalClaims
+            feature_cols = []
+            
+            # Vehicle features
+            vehicle_features = ['SumInsured', 'Cubiccapacity', 'Kilowatts', 'RegistrationYear']
+            feature_cols.extend([col for col in vehicle_features if col in zipcode_data.columns])
+            
+            # Plan features
+            plan_features = ['CalculatedPremiumPerTerm', 'ExcessSelected']
+            feature_cols.extend([col for col in plan_features if col in zipcode_data.columns])
+            
+            # Remove missing values
+            zipcode_data = zipcode_data[feature_cols + ['TotalClaims']].dropna()
+            
+            if len(zipcode_data) < 10 or 'TotalClaims' not in zipcode_data.columns:
+                continue
+            
+            X = zipcode_data[feature_cols]
+            y = zipcode_data['TotalClaims']
+            
+            # Fit linear regression
+            try:
+                model = LinearRegression()
+                model.fit(X, y)
+                y_pred = model.predict(X)
+                
+                # Calculate metrics
+                rmse = np.sqrt(mean_squared_error(y, y_pred))
+                r2 = r2_score(y, y_pred)
+                mae = mean_absolute_error(y, y_pred)
+                
+                zipcode_models[zipcode] = model
+                zipcode_results.append({
+                    'ZipCode': zipcode,
+                    'SampleSize': len(zipcode_data),
+                    'RMSE': rmse,
+                    'R2': r2,
+                    'MAE': mae,
+                    'Features': ', '.join(feature_cols)
+                })
+                
+            except Exception as e:
+                print(f"   Warning: Could not fit model for zipcode {zipcode}: {str(e)}")
+                continue
+        
+        # Save results
+        if zipcode_results:
+            results_df = pd.DataFrame(zipcode_results)
+            results_df = results_df.sort_values('R2', ascending=False)
+            results_df.to_csv(self.report_path / "zipcode_linear_regression_results.csv", index=False)
+            
+            print(f"\n✓ Fitted models for {len(zipcode_models)} zipcodes")
+            print(f"\nTop 10 Zipcodes by R²:")
+            print(results_df.head(10).to_string(index=False))
+            
+            # Save models
+            for zipcode, model in zipcode_models.items():
+                model_path = self.models_path / f"linear_regression_zipcode_{zipcode}.joblib"
+                joblib.dump(model, model_path)
+            
+            return zipcode_models, results_df
+        else:
+            print("✗ No valid models could be fitted")
+            return None, None
+    
     def run_all_modeling(self):
         """Run complete modeling pipeline"""
         print("="*50)
@@ -475,7 +573,14 @@ class InsuranceModelTrainer:
         print("="*50)
         
         self.load_data()
+        
+        # Task requirement: For each zipcode, fit a linear regression model
+        self.train_zipcode_linear_regression_models()
+        
+        # Claim severity prediction
         self.train_claim_severity_model()
+        
+        # Premium optimization
         self.train_premium_optimization_model()
         
         print("\n" + "="*50)

@@ -179,9 +179,61 @@ class EDAAnalyzer:
             plt.savefig(self.report_path / "correlation_heatmap.png", dpi=300, bbox_inches='tight')
             plt.close()
         
+        # Monthly changes TotalPremium and TotalClaims as a function of ZipCode
+        zipcode_col = None
+        for col in ['PostalCode', 'ZipCode', 'Zip', 'Postal']:
+            if col in self.df.columns:
+                zipcode_col = col
+                break
+        
+        if zipcode_col and 'TransactionMonth' in self.df.columns:
+            print("\n2. Monthly Changes in TotalPremium and TotalClaims by ZipCode:")
+            
+            # Calculate monthly changes by zipcode
+            monthly_zipcode_data = self.df.groupby([zipcode_col, 'TransactionMonth']).agg({
+                'TotalPremium': 'sum',
+                'TotalClaims': 'sum'
+            }).reset_index()
+            
+            # Calculate month-over-month changes
+            monthly_changes = []
+            for zipcode in monthly_zipcode_data[zipcode_col].unique():
+                zipcode_data = monthly_zipcode_data[monthly_zipcode_data[zipcode_col] == zipcode].sort_values('TransactionMonth')
+                zipcode_data['PremiumChange'] = zipcode_data['TotalPremium'].diff()
+                zipcode_data['ClaimsChange'] = zipcode_data['TotalClaims'].diff()
+                monthly_changes.append(zipcode_data)
+            
+            if monthly_changes:
+                monthly_changes_df = pd.concat(monthly_changes, ignore_index=True)
+                monthly_changes_df.to_csv(self.report_path / "monthly_changes_by_zipcode.csv", index=False)
+                
+                # Scatter plot: Monthly changes TotalPremium vs TotalClaims by ZipCode
+                top_zipcodes = monthly_zipcode_data.groupby(zipcode_col)['TotalPremium'].sum().nlargest(10).index
+                fig, ax = plt.subplots(figsize=(12, 8))
+                
+                for zipcode in top_zipcodes:
+                    zipcode_changes = monthly_changes_df[monthly_changes_df[zipcode_col] == zipcode]
+                    if len(zipcode_changes) > 0:
+                        ax.scatter(zipcode_changes['PremiumChange'], zipcode_changes['ClaimsChange'], 
+                                 label=f'ZipCode {zipcode}', alpha=0.6, s=100)
+                
+                ax.set_xlabel('Monthly Change in TotalPremium', fontsize=12, fontweight='bold')
+                ax.set_ylabel('Monthly Change in TotalClaims', fontsize=12, fontweight='bold')
+                ax.set_title('Monthly Changes: TotalPremium vs TotalClaims by ZipCode', fontsize=14, fontweight='bold')
+                ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+                ax.grid(alpha=0.3)
+                plt.tight_layout()
+                plt.savefig(self.report_path / "monthly_changes_premium_claims_zipcode.png", dpi=300, bbox_inches='tight')
+                plt.close()
+                print("   Created visualization: Monthly changes by ZipCode")
+        
         # Loss Ratio analysis
         if 'TotalClaims' in self.df.columns and 'TotalPremium' in self.df.columns:
             self.df['LossRatio'] = self.df['TotalClaims'] / (self.df['TotalPremium'] + 1e-6)
+            
+            # Overall Loss Ratio
+            overall_loss_ratio = self.df['TotalClaims'].sum() / (self.df['TotalPremium'].sum() + 1e-6)
+            print(f"\n3. Overall Loss Ratio: {overall_loss_ratio:.4f}")
             
             # Loss Ratio by Province
             if 'Province' in self.df.columns:
@@ -191,9 +243,68 @@ class EDAAnalyzer:
                 })
                 loss_by_province['LossRatio'] = loss_by_province['TotalClaims'] / (loss_by_province['TotalPremium'] + 1e-6)
                 loss_by_province = loss_by_province.sort_values('LossRatio', ascending=False)
-                print("\n2. Loss Ratio by Province:")
+                print("\n4. Loss Ratio by Province:")
                 print(loss_by_province.to_string())
                 loss_by_province.to_csv(self.report_path / "loss_ratio_by_province.csv")
+            
+            # Loss Ratio by VehicleType
+            if 'VehicleType' in self.df.columns:
+                loss_by_vehicle = self.df.groupby('VehicleType').agg({
+                    'TotalPremium': 'sum',
+                    'TotalClaims': 'sum'
+                })
+                loss_by_vehicle['LossRatio'] = loss_by_vehicle['TotalClaims'] / (loss_by_vehicle['TotalPremium'] + 1e-6)
+                loss_by_vehicle = loss_by_vehicle.sort_values('LossRatio', ascending=False)
+                print("\n5. Loss Ratio by VehicleType:")
+                print(loss_by_vehicle.to_string())
+                loss_by_vehicle.to_csv(self.report_path / "loss_ratio_by_vehicletype.csv")
+            
+            # Loss Ratio by Gender
+            if 'Gender' in self.df.columns:
+                loss_by_gender = self.df.groupby('Gender').agg({
+                    'TotalPremium': 'sum',
+                    'TotalClaims': 'sum'
+                })
+                loss_by_gender['LossRatio'] = loss_by_gender['TotalClaims'] / (loss_by_gender['TotalPremium'] + 1e-6)
+                loss_by_gender = loss_by_gender.sort_values('LossRatio', ascending=False)
+                print("\n6. Loss Ratio by Gender:")
+                print(loss_by_gender.to_string())
+                loss_by_gender.to_csv(self.report_path / "loss_ratio_by_gender.csv")
+            
+            # Vehicle makes/models with highest and lowest claim amounts
+            if 'Make' in self.df.columns and 'Model' in self.df.columns:
+                vehicle_claims = self.df.groupby(['Make', 'Model']).agg({
+                    'TotalClaims': ['sum', 'mean', 'count']
+                }).reset_index()
+                vehicle_claims.columns = ['Make', 'Model', 'TotalClaims_Sum', 'TotalClaims_Mean', 'Count']
+                vehicle_claims = vehicle_claims[vehicle_claims['Count'] >= 5]  # Filter for meaningful sample sizes
+                
+                highest_claims = vehicle_claims.nlargest(10, 'TotalClaims_Sum')
+                lowest_claims = vehicle_claims.nsmallest(10, 'TotalClaims_Sum')
+                
+                print("\n7. Top 10 Vehicle Makes/Models by Total Claims:")
+                print(highest_claims.to_string(index=False))
+                print("\n8. Bottom 10 Vehicle Makes/Models by Total Claims:")
+                print(lowest_claims.to_string(index=False))
+                
+                highest_claims.to_csv(self.report_path / "highest_claim_vehicles.csv", index=False)
+                lowest_claims.to_csv(self.report_path / "lowest_claim_vehicles.csv", index=False)
+            
+            # Temporal trends: Claim frequency and severity over time
+            if 'TransactionMonth' in self.df.columns:
+                self.df['HasClaim'] = (self.df['TotalClaims'] > 0).astype(int)
+                temporal_analysis = self.df.groupby('TransactionMonth').agg({
+                    'HasClaim': 'mean',  # Claim frequency
+                    'TotalClaims': lambda x: x[x > 0].mean() if (x > 0).any() else 0,  # Claim severity
+                    'TotalPremium': 'sum',
+                    'TotalClaims': 'sum'
+                })
+                temporal_analysis.columns = ['ClaimFrequency', 'ClaimSeverity', 'TotalPremium', 'TotalClaims']
+                temporal_analysis['LossRatio'] = temporal_analysis['TotalClaims'] / (temporal_analysis['TotalPremium'] + 1e-6)
+                
+                print("\n9. Temporal Trends (Claim Frequency and Severity):")
+                print(temporal_analysis.to_string())
+                temporal_analysis.to_csv(self.report_path / "temporal_trends.csv")
     
     def outlier_detection(self):
         """Detect outliers using box plots and IQR method"""
