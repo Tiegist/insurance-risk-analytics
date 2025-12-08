@@ -1,0 +1,207 @@
+================================================================================
+INTERIM REPORT: INSURANCE RISK ANALYTICS & PREDICTIVE MODELING
+AlphaCare Insurance Solutions (ACIS)
+Date: [INSERT DATE]
+Analyst: [INSERT NAME]
+================================================================================
+
+EXECUTIVE SUMMARY
+================================================================================
+
+This interim report summarizes the initial phase of the insurance risk analytics
+project, covering exploratory data analysis (EDA) and data version control (DVC)
+setup. The analysis is based on historical insurance claim data from February 2014
+to August 2015, with the objective of optimizing marketing strategy and discovering
+low-risk segments for premium reduction.
+
+Key findings from this phase will be detailed in the final report upon completion
+of hypothesis testing and predictive modeling.
+
+================================================================================
+TASK 1: EXPLORATORY DATA ANALYSIS (EDA)
+================================================================================
+
+1.1 DATA OVERVIEW
+--------------------------------------------------------------------------------
+Dataset Period: February 2014 - August 2015 (18 months)
+Total Records: [INSERT NUMBER]
+Total Features: [INSERT NUMBER]
+
+Data Categories:
+- Insurance Policy Information (UnderwrittenCoverID, PolicyID, TransactionMonth)
+- Client Information (Gender, MaritalStatus, Citizenship, LegalType, etc.)
+- Location Information (Country, Province, PostalCode, MainCrestaZone, etc.)
+- Vehicle Information (Make, Model, VehicleType, RegistrationYear, etc.)
+- Plan Information (SumInsured, CoverType, CalculatedPremiumPerTerm, etc.)
+- Financial Information (TotalPremium, TotalClaims)
+
+1.2 DATA QUALITY ASSESSMENT
+--------------------------------------------------------------------------------
+Missing Values:
+[INSERT SUMMARY OF MISSING VALUES]
+
+Data Quality Issues Identified:
+[INSERT ANY DATA QUALITY ISSUES]
+
+Actions Taken:
+[INSERT DATA CLEANING ACTIONS]
+
+1.3 DESCRIPTIVE STATISTICS
+--------------------------------------------------------------------------------
+Key Financial Metrics:
+- Total Premium: [INSERT VALUE]
+- Total Claims: [INSERT VALUE]
+- Overall Loss Ratio: [INSERT VALUE]
+
+Variability Measures:
+[INSERT DESCRIPTIVE STATISTICS FOR KEY NUMERICAL FEATURES]
+
+1.4 LOSS RATIO ANALYSIS
+--------------------------------------------------------------------------------
+Overall Portfolio Loss Ratio: [INSERT VALUE]
+
+Loss Ratio by Province:
+[INSERT TABLE OR SUMMARY]
+
+Loss Ratio by Vehicle Type:
+[INSERT TABLE OR SUMMARY]
+
+Loss Ratio by Gender:
+[INSERT TABLE OR SUMMARY]
+
+Key Insights:
+[INSERT KEY INSIGHTS FROM LOSS RATIO ANALYSIS]
+
+1.5 TEMPORAL TRENDS
+--------------------------------------------------------------------------------
+Claim Frequency Trends:
+[INSERT ANALYSIS OF CLAIM FREQUENCY OVER TIME]
+
+Claim Severity Trends:
+[INSERT ANALYSIS OF CLAIM SEVERITY OVER TIME]
+
+Monthly Premium and Claims Trends:
+[INSERT ANALYSIS OF MONTHLY TRENDS]
+
+Key Observations:
+[INSERT KEY OBSERVATIONS ABOUT TEMPORAL PATTERNS]
+
+1.6 VEHICLE ANALYSIS
+--------------------------------------------------------------------------------
+Top 10 Vehicle Makes/Models by Total Claims:
+[INSERT LIST]
+
+Bottom 10 Vehicle Makes/Models by Total Claims:
+[INSERT LIST]
+
+Implications:
+[INSERT IMPLICATIONS FOR RISK ASSESSMENT]
+
+1.7 GEOGRAPHICAL ANALYSIS
+--------------------------------------------------------------------------------
+Monthly Changes in TotalPremium and TotalClaims by ZipCode:
+[INSERT ANALYSIS OF MONTHLY CHANGES]
+
+Key Patterns:
+[INSERT KEY GEOGRAPHICAL PATTERNS]
+
+1.8 OUTLIER DETECTION
+--------------------------------------------------------------------------------
+Outliers Identified in:
+- TotalClaims: [INSERT COUNT AND PERCENTAGE]
+- CustomValueEstimate: [INSERT COUNT AND PERCENTAGE]
+- TotalPremium: [INSERT COUNT AND PERCENTAGE]
+- SumInsured: [INSERT COUNT AND PERCENTAGE]
+
+Handling Strategy:
+[INSERT HOW OUTLIERS WERE HANDLED]
+
+1.9 KEY VISUALIZATIONS
+--------------------------------------------------------------------------------
+Three creative visualizations were created to capture key insights:
+
+1. [INSERT DESCRIPTION OF VISUALIZATION 1]
+2. [INSERT DESCRIPTION OF VISUALIZATION 2]
+3. [INSERT DESCRIPTION OF VISUALIZATION 3]
+
+These visualizations are saved in: reports/task1_eda/
+
+================================================================================
+TASK 2: DATA VERSION CONTROL (DVC)
+================================================================================
+
+2.1 DVC SETUP
+--------------------------------------------------------------------------------
+DVC Version: [INSERT VERSION]
+Initialization Date: [INSERT DATE]
+
+Configuration:
+- Local Remote Storage: [INSERT PATH]
+- Data Files Tracked: [INSERT LIST]
+
+2.2 DATA VERSIONING
+--------------------------------------------------------------------------------
+Data Files Added to DVC:
+[INSERT LIST OF DATA FILES]
+
+Version Control Status:
+[INSERT STATUS OF DATA VERSIONING]
+
+2.3 REPRODUCIBILITY
+--------------------------------------------------------------------------------
+The DVC setup ensures that:
+- All data inputs are version-controlled
+- Analysis results can be reproduced at any time
+- Data changes are tracked for auditing and regulatory compliance
+
+This is critical for a regulated industry like insurance, where we must be able
+to reproduce any analysis or model result for auditing purposes.
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+The following tasks will be completed in the final phase:
+
+1. A/B Hypothesis Testing
+   - Test risk differences across provinces
+   - Test risk differences between zip codes
+   - Test margin differences between zip codes
+   - Test risk differences between genders
+
+2. Machine Learning Modeling
+   - Linear regression models for each zipcode
+   - Claim severity prediction model
+   - Premium optimization model
+   - Model evaluation and feature importance analysis
+
+3. Final Report
+   - Comprehensive analysis of all findings
+   - Data-backed recommendations for marketing and pricing strategy
+   - Business implications and actionable insights
+
+================================================================================
+APPENDIX
+================================================================================
+
+A. Files Generated:
+   - reports/task1_eda/descriptive_statistics.csv
+   - reports/task1_eda/missing_values.csv
+   - reports/task1_eda/correlation_matrix.csv
+   - reports/task1_eda/loss_ratio_by_province.csv
+   - reports/task1_eda/loss_ratio_by_vehicletype.csv
+   - reports/task1_eda/loss_ratio_by_gender.csv
+   - reports/task1_eda/monthly_changes_by_zipcode.csv
+   - reports/task1_eda/temporal_trends.csv
+   - reports/task1_eda/highest_claim_vehicles.csv
+   - reports/task1_eda/lowest_claim_vehicles.csv
+   - [Various visualization PNG files]
+
+B. Code Repository:
+   - GitHub: [INSERT REPOSITORY URL]
+   - Branch: task-1, task-2 (merged to main)
+
+================================================================================
+END OF INTERIM REPORT
+================================================================================
+
