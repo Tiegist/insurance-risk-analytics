@@ -122,26 +122,37 @@ dvc init
 
 ## Usage
 
-### Task 1: EDA
+### Quick Start: Run All Analyses and Generate Reports
+```bash
+# Place your data file in data/ directory (e.g., insurance_data.csv)
+python run_analysis_and_generate_reports.py
+```
+This will run all tasks and automatically generate reports with actual findings.
+
+### Run Tasks Individually
+
+#### Task 1: EDA
 ```bash
 python src/task1_eda/eda_analysis.py
 ```
 
-### Task 2: DVC Setup
+#### Task 2: DVC Setup
 ```bash
+python src/task2_dvc/dvc_setup.py
 dvc add data/insurance_data.csv
 dvc push
 ```
 
-### Task 3: Hypothesis Testing
+#### Task 3: Hypothesis Testing
 ```bash
 python src/task3_hypothesis/hypothesis_tests.py
 ```
 
-### Task 4: Modeling
+#### Task 4: Modeling
 ```bash
 python src/task4_modeling/train_models.py
 ```
+
 
 ## Deliverables
 

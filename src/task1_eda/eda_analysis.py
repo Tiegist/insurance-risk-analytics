@@ -442,7 +442,7 @@ class EDAAnalyzer:
 
 if __name__ == "__main__":
     # Example usage
-    data_path = "data/insurance_data.csv"  # Update with actual data path
+    data_path = "src/Statistical Modeling/SM/data/insurance.csv"  # Actual data path
     
     analyzer = EDAAnalyzer(data_path)
     

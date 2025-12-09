@@ -15,8 +15,19 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder, OneHotEncoder
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
-import xgboost as xgb
-import shap
+try:
+    import xgboost as xgb
+    XGBOOST_AVAILABLE = True
+except ImportError:
+    XGBOOST_AVAILABLE = False
+    print("Warning: XGBoost not available. XGBoost models will be skipped.")
+
+try:
+    import shap
+    SHAP_AVAILABLE = True
+except ImportError:
+    SHAP_AVAILABLE = False
+    print("Warning: SHAP not available. SHAP analysis will be skipped.")
 import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
@@ -251,6 +262,10 @@ class InsuranceModelTrainer:
     
     def train_xgboost(self, X_train, y_train, X_test, y_test, n_estimators=100):
         """Train XGBoost model"""
+        if not XGBOOST_AVAILABLE:
+            print("\n[X] XGBoost not available, skipping...")
+            return None
+        
         print("\nTraining XGBoost...")
         
         model = xgb.XGBRegressor(n_estimators=n_estimators, random_state=42, n_jobs=-1)
@@ -292,6 +307,19 @@ class InsuranceModelTrainer:
             return None
         
         model = self.models[model_name]
+        
+        if not SHAP_AVAILABLE:
+            print("   [X] SHAP not available, using built-in feature importance...")
+            if hasattr(model, 'feature_importances_'):
+                feature_importance = pd.DataFrame({
+                    'feature': X_test.columns,
+                    'importance': model.feature_importances_
+                }).sort_values('importance', ascending=False).head(top_n)
+                print(f"\n   Top {top_n} Most Important Features:")
+                print(feature_importance.to_string(index=False))
+                feature_importance.to_csv(self.report_path / f"feature_importance_{model_name.lower()}.csv", index=False)
+                return feature_importance
+            return None
         
         # Use a sample for SHAP (can be slow for large datasets)
         sample_size = min(100, len(X_test))
@@ -382,7 +410,7 @@ class InsuranceModelTrainer:
         # Find best model
         best_model_idx = results_df['test_r2'].idxmax()
         best_model = results_df.loc[best_model_idx, 'model']
-        print(f"\n✓ Best Model (by R²): {best_model}")
+        print(f"\n[OK] Best Model (by R²): {best_model}")
         print(f"   Test R²: {results_df.loc[best_model_idx, 'test_r2']:.4f}")
         print(f"   Test RMSE: {results_df.loc[best_model_idx, 'test_rmse']:.2f}")
         
@@ -485,7 +513,7 @@ class InsuranceModelTrainer:
                 break
         
         if not zipcode_col:
-            print("✗ Zip code column not found in data")
+            print("[X] Zip code column not found in data")
             return None
         
         # Get zipcodes with sufficient data (at least 10 samples)
@@ -552,7 +580,7 @@ class InsuranceModelTrainer:
             results_df = results_df.sort_values('R2', ascending=False)
             results_df.to_csv(self.report_path / "zipcode_linear_regression_results.csv", index=False)
             
-            print(f"\n✓ Fitted models for {len(zipcode_models)} zipcodes")
+            print(f"\n[OK] Fitted models for {len(zipcode_models)} zipcodes")
             print(f"\nTop 10 Zipcodes by R²:")
             print(results_df.head(10).to_string(index=False))
             
@@ -563,7 +591,7 @@ class InsuranceModelTrainer:
             
             return zipcode_models, results_df
         else:
-            print("✗ No valid models could be fitted")
+            print("[X] No valid models could be fitted")
             return None, None
     
     def run_all_modeling(self):
@@ -592,7 +620,7 @@ class InsuranceModelTrainer:
 
 if __name__ == "__main__":
     # Example usage
-    data_path = "data/insurance_data.csv"  # Update with actual data path
+    data_path = "src/Statistical Modeling/SM/data/insurance.csv"  # Actual data path
     
     trainer = InsuranceModelTrainer(data_path)
     

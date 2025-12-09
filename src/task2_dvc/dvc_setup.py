@@ -16,12 +16,12 @@ def run_command(command, description):
     print(f"\n{description}...")
     try:
         result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
-        print(f"✓ {description} completed successfully")
+        print(f"[OK] {description} completed successfully")
         if result.stdout:
             print(result.stdout)
         return True
     except subprocess.CalledProcessError as e:
-        print(f"✗ Error: {description} failed")
+        print(f"[X] Error: {description} failed")
         print(f"  Error message: {e.stderr}")
         return False
 
@@ -36,24 +36,24 @@ def setup_dvc():
     print("\n1. Checking DVC installation...")
     try:
         subprocess.run(["dvc", "--version"], check=True, capture_output=True)
-        print("✓ DVC is installed")
+        print("[OK] DVC is installed")
     except (subprocess.CalledProcessError, FileNotFoundError):
-        print("✗ DVC is not installed. Installing...")
+        print("[X] DVC is not installed. Installing...")
         run_command("pip install dvc", "Installing DVC")
     
     # Initialize DVC
     if not Path(".dvc").exists():
         run_command("dvc init", "Initializing DVC")
     else:
-        print("✓ DVC already initialized")
+        print("[OK] DVC already initialized")
     
     # Create local storage directory
     storage_path = Path("dvc_storage")
     if not storage_path.exists():
         storage_path.mkdir(parents=True, exist_ok=True)
-        print(f"✓ Created storage directory: {storage_path.absolute()}")
+        print(f"[OK] Created storage directory: {storage_path.absolute()}")
     else:
-        print(f"✓ Storage directory already exists: {storage_path.absolute()}")
+        print(f"[OK] Storage directory already exists: {storage_path.absolute()}")
     
     # Add local remote storage
     print("\n2. Configuring local remote storage...")
@@ -64,7 +64,7 @@ def setup_dvc():
     data_path = Path("data")
     if not data_path.exists():
         data_path.mkdir(parents=True, exist_ok=True)
-        print(f"✓ Created data directory: {data_path.absolute()}")
+        print(f"[OK] Created data directory: {data_path.absolute()}")
     
     print("\n" + "="*50)
     print("DVC SETUP COMPLETE!")
@@ -81,7 +81,7 @@ def add_data_file(data_file_path: str):
     data_path = Path(data_file_path)
     
     if not data_path.exists():
-        print(f"✗ Error: Data file not found at {data_path}")
+        print(f"[X] Error: Data file not found at {data_path}")
         return False
     
     print(f"\nAdding {data_path} to DVC...")

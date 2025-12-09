@@ -80,13 +80,13 @@ class HypothesisTester:
         print("="*50)
         
         if 'Province' not in self.df.columns:
-            print("✗ Province column not found in data")
+            print("[X] Province column not found in data")
             return None
         
         # Group by province
         provinces = self.df['Province'].unique()
         if len(provinces) < 2:
-            print("✗ Need at least 2 provinces for comparison")
+            print("[X] Need at least 2 provinces for comparison")
             return None
         
         print(f"\nTesting {len(provinces)} provinces...")
@@ -101,9 +101,9 @@ class HypothesisTester:
         print(f"   Degrees of freedom: {dof}")
         
         if p_value_freq < alpha:
-            print(f"   ✓ REJECT H₀ (p < {alpha}): There ARE significant risk differences across provinces")
+            print(f"   [OK] REJECT H₀ (p < {alpha}): There ARE significant risk differences across provinces")
         else:
-            print(f"   ✗ FAIL TO REJECT H₀ (p >= {alpha}): No significant risk differences across provinces")
+            print(f"   [X] FAIL TO REJECT H₀ (p >= {alpha}): No significant risk differences across provinces")
         
         # Test 2: Claim Severity (ANOVA or Kruskal-Wallis)
         province_claims = [self.df[(self.df['Province'] == prov) & (self.df['HasClaim'] == 1)]['ClaimAmount'].values 
@@ -119,9 +119,9 @@ class HypothesisTester:
             print(f"   p-value: {p_value_sev:.6f}")
             
             if p_value_sev < alpha:
-                print(f"   ✓ REJECT H₀ (p < {alpha}): There ARE significant severity differences across provinces")
+                print(f"   [OK] REJECT H₀ (p < {alpha}): There ARE significant severity differences across provinces")
             else:
-                print(f"   ✗ FAIL TO REJECT H₀ (p >= {alpha}): No significant severity differences across provinces")
+                print(f"   [X] FAIL TO REJECT H₀ (p >= {alpha}): No significant severity differences across provinces")
         
         # Summary by province
         print("\n3. Summary by Province:")
@@ -160,7 +160,7 @@ class HypothesisTester:
                 break
         
         if zipcode_col is None:
-            print("✗ Zip code column not found in data")
+            print("[X] Zip code column not found in data")
             return None
         
         # Get top N zip codes by volume
@@ -190,9 +190,9 @@ class HypothesisTester:
         print(f"   p-value: {p_value_freq:.6f}")
         
         if p_value_freq < alpha:
-            print(f"   ✓ REJECT H₀ (p < {alpha}): There ARE significant risk differences between zip codes")
+            print(f"   [OK] REJECT H₀ (p < {alpha}): There ARE significant risk differences between zip codes")
         else:
-            print(f"   ✗ FAIL TO REJECT H₀ (p >= {alpha}): No significant risk differences between zip codes")
+            print(f"   [X] FAIL TO REJECT H₀ (p >= {alpha}): No significant risk differences between zip codes")
         
         # Summary by zip code
         print("\n2. Summary by Top Zip Codes:")
@@ -233,7 +233,7 @@ class HypothesisTester:
                 break
         
         if zipcode_col is None:
-            print("✗ Zip code column not found in data")
+            print("[X] Zip code column not found in data")
             return None
         
         # Get top N zip codes by volume
@@ -256,9 +256,9 @@ class HypothesisTester:
             print(f"   p-value: {p_value:.6f}")
             
             if p_value < alpha:
-                print(f"   ✓ REJECT H₀ (p < {alpha}): There ARE significant margin differences between zip codes")
+                print(f"   [OK] REJECT H₀ (p < {alpha}): There ARE significant margin differences between zip codes")
             else:
-                print(f"   ✗ FAIL TO REJECT H₀ (p >= {alpha}): No significant margin differences between zip codes")
+                print(f"   [X] FAIL TO REJECT H₀ (p >= {alpha}): No significant margin differences between zip codes")
         
         # Summary by zip code
         print("\n2. Margin Summary by Top Zip Codes:")
@@ -293,14 +293,14 @@ class HypothesisTester:
         print("="*50)
         
         if 'Gender' not in self.df.columns:
-            print("✗ Gender column not found in data")
+            print("[X] Gender column not found in data")
             return None
         
         # Filter to only Male and Female (if other values exist)
         gender_data = self.df[self.df['Gender'].isin(['Male', 'Female', 'M', 'F'])].copy()
         
         if len(gender_data) == 0:
-            print("✗ No valid gender data found")
+            print("[X] No valid gender data found")
             return None
         
         # Normalize gender values
@@ -309,7 +309,7 @@ class HypothesisTester:
         
         genders = gender_data['Gender'].unique()
         if len(genders) < 2:
-            print("✗ Need both Male and Female data for comparison")
+            print("[X] Need both Male and Female data for comparison")
             return None
         
         print(f"\nComparing genders: {', '.join(genders)}...")
@@ -323,9 +323,9 @@ class HypothesisTester:
         print(f"   p-value: {p_value_freq:.6f}")
         
         if p_value_freq < alpha:
-            print(f"   ✓ REJECT H₀ (p < {alpha}): There ARE significant risk differences between genders")
+            print(f"   [OK] REJECT H₀ (p < {alpha}): There ARE significant risk differences between genders")
         else:
-            print(f"   ✗ FAIL TO REJECT H₀ (p >= {alpha}): No significant risk differences between genders")
+            print(f"   [X] FAIL TO REJECT H₀ (p >= {alpha}): No significant risk differences between genders")
         
         # Test 2: Claim Severity (Mann-Whitney U test - non-parametric)
         male_claims = gender_data[(gender_data['Gender'] == 'Male') & (gender_data['HasClaim'] == 1)]['ClaimAmount'].values
@@ -339,9 +339,9 @@ class HypothesisTester:
             print(f"   p-value: {p_value_sev:.6f}")
             
             if p_value_sev < alpha:
-                print(f"   ✓ REJECT H₀ (p < {alpha}): There ARE significant severity differences between genders")
+                print(f"   [OK] REJECT H₀ (p < {alpha}): There ARE significant severity differences between genders")
             else:
-                print(f"   ✗ FAIL TO REJECT H₀ (p >= {alpha}): No significant severity differences between genders")
+                print(f"   [X] FAIL TO REJECT H₀ (p >= {alpha}): No significant severity differences between genders")
         
         # Summary by gender
         print("\n3. Summary by Gender:")
@@ -419,7 +419,7 @@ class HypothesisTester:
 
 if __name__ == "__main__":
     # Example usage
-    data_path = "data/insurance_data.csv"  # Update with actual data path
+    data_path = "src/Statistical Modeling/SM/data/insurance.csv"  # Actual data path
     
     tester = HypothesisTester(data_path)
     
