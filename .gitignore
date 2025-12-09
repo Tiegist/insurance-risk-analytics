@@ -78,3 +78,6 @@ Thumbs.db
 temp/
 tmp/
 
+# Large files that exceed GitHub's 100MB limit
+src/MachineLearningRating_v3/MachineLearningRating_v3.txt
+
